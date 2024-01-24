@@ -93,7 +93,7 @@ function Profile() {
         }
         setLinks(newArray);
       }).catch((error) => {
-        // Uh-oh, an error occurred!
+        Alert.alert(error.code);
       });
   }
 
