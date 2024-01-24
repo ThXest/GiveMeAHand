@@ -3,7 +3,7 @@ import { initializeApp } from 'firebase/app';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -19,10 +19,15 @@ import {
 
 // Optionally import the services that you want to use
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
-import { getStorage, ref, uploadBytes, getBytes, uploadString, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, uploadString, getDownloadURL, listAll } from "firebase/storage";
 import * as ImagePicker from 'expo-image-picker';
 import { Buffer } from "buffer";
 import base64 from 'react-native-base64';
+import { decode } from 'base-64';
+
+if (typeof atob === 'undefined') {
+  global.atob = decode;
+}
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -47,60 +52,86 @@ function Profile() {
   const [image, setImage] = useState(null);
   const [links, setLinks] = useState(['no data']);
   const [image64, setImage64] = useState("");
+  const [imageURL, setImageURL] = useState("");
+  const [postNum, setPostNum] = useState(0);
+  const [postName, setPostName] = useState("");
+  const [postDownload, setPostDownload] = useState("");
   const user = auth.currentUser;
   const navigation = useNavigation();
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: false,
+      allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
       base64: true
     });
-    console.log(result.assets[0].base64.length);
-    console.log(result.assets[0].mimeType);
     if (!result.canceled) {
       setImage(result.assets[0].uri);
       setImage64(result.assets[0].base64);
     }
   }
-  return (
-    <View>
-      <Text style={{ fontSize: 20 }}>{user?.email}</Text>
+  const findTotalPostNum = () => {
+    const listRef = ref(storage, "/files/" + user?.uid);
+    // Find all the prefixes and items.
+    listAll(listRef)
+      .then((res) => {
+        /* res.prefixes.forEach((folderRef) => {
 
+        }); */
+        var totalNum = res.items.length;
+        setPostNum(totalNum);
+        var newArray = [];
+        if (totalNum == 0) {
+          newArray.push('no-data');
+        }
+        else {
+          res.items.forEach((itemRef) => {
+            newArray.push(itemRef.name);
+          });
+        }
+        setLinks(newArray);
+      }).catch((error) => {
+        // Uh-oh, an error occurred!
+      });
+  }
+
+  useLayoutEffect(() => {
+    findTotalPostNum();
+  }, []);
+
+  return (
+    <View onLo>
+      <Text style={{ fontSize: 20 }}>{user?.email}</Text>
       <Button title='Open Gallery' onPress={pickImage} />
       <Button title="Upload" onPress={async () => {
-        const reference = ref(storage, "/images/" + user?.email + "/" + "deneme2");
-        var temp = base64.decode(`${image64}`);
-        var binaryString = base64.encode(temp);
-
-        var len = binaryString.length;
-        var bytes = new Uint8Array(len);
-        console.log(len);
-        for (var i = 0; i < len; i++) {
-          bytes[i] = binaryString.charCodeAt(i);
-        }
+        const reference = ref(storage, "/files/" + user?.uid + "/" + postName + ".txt");
         console.log(image64.length);
         uploadString(reference, image64, 'base64').then((snapshot) => {
-          console.log('Uploaded a str!');
+          findTotalPostNum();
+          Alert.alert('Uploaded!');
+        }).catch((error) => {
+          Alert.alert(error.code);
         });
+
       }} />
 
       <Button title='Download' onPress={async () => {
-        getDownloadURL(ref(storage, "/images/" + user?.email + "/" + "deneme2"))
+        getDownloadURL(ref(storage, "/files/" + user?.uid + "/" + postDownload + ".txt"))
           .then((url) => {
             const xhr = new XMLHttpRequest();
             xhr.responseType = 'text';
             xhr.onload = (event) => {
-              const blob = xhr.response;
+              const text = xhr.response;
+              setImageURL(text);
             };
             xhr.open('GET', url);
             xhr.send();
-            console.log(url);
+            Alert.alert("Downloaded!");
           })
           .catch((error) => {
-            // Handle any errors
+            Alert.alert(error.code);
           });
       }} />
       <Button title='Sign Out' onPress={async () => {
@@ -109,20 +140,28 @@ function Profile() {
           navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
         });
       }} />
-      <Button title="List file links" onPress={() => {
-        const reference = storage().ref("/images/" + user?.email);
-        reference.listAll().then(result => {
-          var newArray = [];
-          result.items.forEach(ref => {
-            newArray.push(ref.fullPath);
-          });
-          setLinks(newArray);
-        });
-
-      }} />
-
+      <Text style={{ fontSize: 20, marginTop: 10 }}>Total Post Num: {postNum} (Posts are stored in base64 string format)</Text>
       <FlatList data={links} renderItem={({ item }) => <Text>{item}</Text>} />
-      <Image src={`data:image/jpeg;base64,${image64}`} style={{ width: '50%', height: '50%', marginHorizontal: '25%' }} />
+      <View>
+        <Text style={{ fontSize: 20, marginTop: 10, textAlign: 'center' }}>Photo you will upload</Text>
+        <TextInput onChangeText={setPostName} value={postName} placeholder='Give your post a name (do not specify mime type)' style={{ fontSize: 20, marginTop: 10, textAlign: 'center' }} />
+      </View>
+
+      <View style={{ width: '30%', height: '30%', marginHorizontal: '35%', borderColor: 'black', borderWidth: 3 }}>
+        <Image src={`data:image/jpeg;base64,${image64}`} style={{ width: '100%', height: '100%' }} />
+      </View>
+
+      <View style={{ borderBottomColor: 'black', borderBottomWidth: 4, marginTop: 10 }}>
+
+      </View>
+      <View>
+        <TextInput onChangeText={setPostDownload} value={postDownload} placeholder='Enter name of the post you want to download (do not specify mime type)' style={{ fontSize: 20, marginTop: 10, textAlign: 'center' }} />
+        <Text style={{ fontSize: 20, marginTop: 10, textAlign: 'center' }}>Photo you downloaded</Text>
+      </View>
+      <View style={{ width: '30%', height: '30%', marginHorizontal: '35%', borderColor: 'black', borderWidth: 3 }}>
+        <Image src={`data:image/jpeg;base64,${imageURL}`} style={{ width: '100%', height: '100%' }} />
+      </View>
+
     </View>
   );
 }
