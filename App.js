@@ -16,6 +16,10 @@ import {
   Image
 } from 'react-native';
 
+import Post from './src/components/Post';
+import Feed from './src/screens/Feed';
+import CreatePost from './src/screens/CreatePost';
+import AppHome from './src/screens/Home';
 
 // Optionally import the services that you want to use
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
@@ -103,7 +107,7 @@ function Profile() {
 
   return (
     <View onLo>
-      <Text style={{ fontSize: 20 }}>{user?.email}</Text>
+      {/* <Text style={{ fontSize: 20 }}>{user?.email}</Text>
       <Button title='Open Gallery' onPress={pickImage} />
       <Button title="Upload" onPress={async () => {
         const reference = ref(storage, "/files/" + user?.uid + "/" + postName + ".txt");
@@ -115,9 +119,8 @@ function Profile() {
           Alert.alert(error.code);
         });
 
-      }} />
-
-      <Button title='Download' onPress={async () => {
+      }} /> */}
+      {/* <Button title='Download' onPress={async () => {
         getDownloadURL(ref(storage, "/files/" + user?.uid + "/" + postDownload + ".txt"))
           .then((url) => {
             const xhr = new XMLHttpRequest();
@@ -133,14 +136,16 @@ function Profile() {
           .catch((error) => {
             Alert.alert(error.code);
           });
-      }} />
+      }} /> */}
+      <Feed/>
+      <CreatePost></CreatePost>
       <Button title='Sign Out' onPress={async () => {
         await auth.signOut().then(() => {
           Alert.alert("Signed out!");
           navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
         });
       }} />
-      <Text style={{ fontSize: 20, marginTop: 10 }}>Total Post Num: {postNum} (Posts are stored in base64 string format)</Text>
+      {/* <Text style={{ fontSize: 20, marginTop: 10 }}>Total Post Num: {postNum} (Posts are stored in base64 string format)</Text>
       <FlatList data={links} renderItem={({ item }) => <Text>{item}</Text>} />
       <View>
         <Text style={{ fontSize: 20, marginTop: 10, textAlign: 'center' }}>Photo you will upload</Text>
@@ -160,7 +165,7 @@ function Profile() {
       </View>
       <View style={{ width: '30%', height: '30%', marginHorizontal: '35%', borderColor: 'black', borderWidth: 3 }}>
         <Image src={`data:image/jpeg;base64,${imageURL}`} style={{ width: '100%', height: '100%' }} />
-      </View>
+      </View> */}
 
     </View>
   );
@@ -226,9 +231,11 @@ function Main() {
   }
 
   return (
-    <Profile>
+    // <Profile>
 
-    </Profile>
+    // </Profile>
+      <AppHome />
+    
   );
 }
 function App() {
