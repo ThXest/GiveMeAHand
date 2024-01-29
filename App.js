@@ -137,7 +137,7 @@ function Profile() {
             Alert.alert(error.code);
           });
       }} /> */}
-      <Feed/>
+      <Feed />
       <CreatePost></CreatePost>
       <Button title='Sign Out' onPress={async () => {
         await auth.signOut().then(() => {
@@ -177,7 +177,7 @@ function Home() {
   const navigation = useNavigation();
 
   return (
-    <View>
+    <View style={{ marginTop: '2%' }}>
       <TextInput onChangeText={setEmail} value={email} placeholder='Email' />
       <TextInput onChangeText={setPassword} value={password} placeholder='Password' secureTextEntry={true} />
       <Button title="Login" onPress={() => {
@@ -189,14 +189,14 @@ function Home() {
         });
       }} />
       <Text style={{ fontSize: 18 }}>If you have no account, <Text style={{ color: "blue" }} onPress={() => {
-        navigation.navigate(NewAccount);
+        navigation.navigate('NewAccount');
       }}>sign up</Text></Text>
 
     </View>
   );
 }
 
-function NewAccount() {
+export function NewAccount() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigation = useNavigation();
@@ -234,14 +234,15 @@ function Main() {
     // <Profile>
 
     // </Profile>
-      <AppHome />
-    
+    <AppHome />
+
   );
 }
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Main'>
+      <Main></Main>
+      {/* <Stack.Navigator initialRouteName='Main'>
         <Stack.Screen name="Main"
           component={Main} />
 
@@ -253,7 +254,7 @@ function App() {
 
         <Stack.Screen name="NewAccount"
           component={NewAccount} />
-      </Stack.Navigator>
+      </Stack.Navigator> */}
     </NavigationContainer>
   );
 }

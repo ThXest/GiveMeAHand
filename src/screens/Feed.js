@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, FlatList, Button, StyleSheet } from 'react-native';
-import Post from '../components/Post'; 
+import Post from '../components/Post';
 
 // Add navigation as a prop to the Feed component
 const Feed = ({ navigation }) => {
@@ -16,7 +16,7 @@ const Feed = ({ navigation }) => {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} >
       {/* FlatList for rendering posts */}
       <FlatList
         data={posts}

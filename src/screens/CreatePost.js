@@ -21,7 +21,7 @@ const CreatePost = ({ navigation }) => {
         value={content}
         onChangeText={setContent}
       />
-      <Button title="Share Post" onPress={sharePost}/>
+      <Button title="Share Post" onPress={sharePost} />
     </View>
   );
 };
