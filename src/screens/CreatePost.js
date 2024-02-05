@@ -12,7 +12,7 @@ const CreatePost = ({ navigation }) => {
 
     }
     else {
-      await setDoc(doc(firestore, 'posts', 'post1'), {
+      await setDoc(doc(firestore, 'posts', 'post3'), {
         text_content: content,
         uid: user.uid,
       });

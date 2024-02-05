@@ -1,29 +1,38 @@
-import React from 'react';
+import React, { useLayoutEffect, useState, useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { View, FlatList, Button, StyleSheet } from 'react-native';
 import Post from '../components/Post';
 import { firestore } from '../firebase/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
 
 // Add navigation as a prop to the Feed component
 const Feed = ({ navigation }) => {
 
-  const getFromFirestore = async () => {
-    const docRef = doc(firestore, "posts", "post1");
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      console.log("Document data:", docSnap.data().uid);
-    } else {
-      // docSnap.data() will be undefined in this case
-      console.log("No such document!");
-    }
-  }
-  getFromFirestore();
   // Dummy data array for posts
-  const posts = [
-    { id: '1', username: 'emredinc', content: 'Added Post and CreatePost Components to share posts' },
-    { id: '2', username: 'emredinc10', content: 'Fenerin maçı var!!!' },
-  ];
+  const [posts, setPosts] = useState([]);
+  let number = 1;
+  const getFromFirestore = async () => {
+    const querySnapshot = await getDocs(collection(firestore, "posts"));
+    const newPosts = [];
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      const id = data.uid;
+      const content = data.text_content;
+      console.log(content);
+      // doc.data() is never undefined for query doc snapshots
+      newPosts.push({
+        id: `${number}`,
+        username: `${id}`,
+        content: content,
+      });
+      number = number + 1;
+    });
+    setPosts(newPosts);
+  }
+
+  useEffect(() => {
+    getFromFirestore();
+  }, []);
 
   // Render each post using FlatList for better performance with lists
   const renderPost = ({ item }) => (
