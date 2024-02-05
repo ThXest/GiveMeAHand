@@ -1,10 +1,26 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet } from 'react-native';
+import { firestore } from '../firebase/firebase';
+import { auth } from '../firebase/firebase';
+import { doc, setDoc } from 'firebase/firestore';
 
 const CreatePost = ({ navigation }) => {
   const [content, setContent] = useState('');
+  const user = auth.currentUser;
+  const sendToFirebase = async () => {
+    if (!user) {
 
+    }
+    else {
+      await setDoc(doc(firestore, 'posts', 'post1'), {
+        text_content: content,
+        uid: user.uid,
+      });
+    }
+
+  }
   const sharePost = () => {
+    sendToFirebase();
     // Here you would handle the post-sharing logic, e.g., send the content to the backend
     // For now, we will just print the content to the console
     console.log(content);

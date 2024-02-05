@@ -1,5 +1,4 @@
 import { StatusBar } from 'expo-status-bar';
-import { initializeApp } from 'firebase/app';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 
@@ -21,9 +20,13 @@ import Feed from './src/screens/Feed';
 import CreatePost from './src/screens/CreatePost';
 import AppHome from './src/screens/Home';
 
+window.navigator.userAgent = "ReactNative";
 // Optionally import the services that you want to use
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
-import { getStorage, ref, uploadString, getDownloadURL, listAll } from "firebase/storage";
+import { auth } from './src/firebase/firebase';
+import { storage } from './src/firebase/firebase';
+import { firestore } from './src/firebase/firebase';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { ref, uploadString, getDownloadURL, listAll } from "firebase/storage";
 import * as ImagePicker from 'expo-image-picker';
 import { Buffer } from "buffer";
 import base64 from 'react-native-base64';
@@ -33,22 +36,6 @@ if (typeof atob === 'undefined') {
   global.atob = decode;
 }
 
-// Initialize Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyBgbutiOc5TkPiNP_CXxG7Nfy4hZC5d7Hk",
-  authDomain: "gdsc-7d43f.firebaseapp.com",
-  projectId: "gdsc-7d43f",
-  storageBucket: "gdsc-7d43f.appspot.com",
-  messagingSenderId: "1077135456875",
-  appId: "1:1077135456875:web:39a440e1e44bb0cf28cf2e",
-  measurementId: "G-YR7B77R6YQ"
-};
-
-const app = initializeApp(firebaseConfig);
-
-const auth = getAuth(app);
-
-const storage = getStorage(app);
 
 const Stack = createNativeStackNavigator();
 
