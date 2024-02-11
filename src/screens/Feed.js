@@ -19,7 +19,7 @@ const Feed = ({ navigation }) => {
     // öyleyse niye ulaşamıyoruz?
     // problem: related to states as akif says. update of state is not working(probably)
     querySnapshot.forEach((doc) => {
-      const data = doc.data();  
+      const data = doc.data();
       const id = data.uid;
       const content = data.text_content;
       console.log(content);
@@ -35,8 +35,12 @@ const Feed = ({ navigation }) => {
   }
 
   useEffect(() => {
-    getFromFirestore();
-  });
+    const unsubscribe = navigation.addListener("focus", () => {
+      getFromFirestore();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   // Render each post using FlatList for better performance with lists
   const renderPost = ({ item }) => (
