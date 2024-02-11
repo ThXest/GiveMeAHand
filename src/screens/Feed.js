@@ -12,10 +12,14 @@ const Feed = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
   let number = 1;
   const getFromFirestore = async () => {
-    const querySnapshot = await getDocs(collection(firestore, "posts"));
+    const querySnapshot = await getDocs(collection(firestore, "posts")); // Get all posts from Firestore
     const newPosts = [];
+    // so we need to iterate through the querySnapshot to get the data for each post
+    // how did you understand that it retrieves all post data?
+    // öyleyse niye ulaşamıyoruz?
+    // problem: related to states as akif says. update of state is not working(probably)
     querySnapshot.forEach((doc) => {
-      const data = doc.data();
+      const data = doc.data();  
       const id = data.uid;
       const content = data.text_content;
       console.log(content);
@@ -32,7 +36,7 @@ const Feed = ({ navigation }) => {
 
   useEffect(() => {
     getFromFirestore();
-  }, []);
+  });
 
   // Render each post using FlatList for better performance with lists
   const renderPost = ({ item }) => (
@@ -64,3 +68,4 @@ const styles = StyleSheet.create({
 });
 
 export default Feed;
+// export {getFromFirestore};

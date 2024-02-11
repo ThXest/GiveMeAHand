@@ -164,7 +164,7 @@ function Home() {
   const navigation = useNavigation();
 
   return (
-    <View style={{ marginTop: '2%' }}>
+    <View style={{ marginTop: '10%' }}>
       <TextInput onChangeText={setEmail} value={email} placeholder='Email' />
       <TextInput onChangeText={setPassword} value={password} placeholder='Password' secureTextEntry={true} />
       <Button title="Login" onPress={() => {
