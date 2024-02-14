@@ -19,7 +19,7 @@ import Post from './src/components/Post';
 import Feed from './src/screens/Feed';
 import CreatePost from './src/screens/CreatePost';
 import AppHome from './src/screens/Home';
-
+import Chat from './src/screens/Chat';
 window.navigator.userAgent = "ReactNative";
 // Optionally import the services that you want to use
 import { auth } from './src/firebase/firebase';
@@ -202,11 +202,17 @@ export function NewAccount() {
     </View>
   );
 }
+function Chat(){
+  
+}
 
 function Main() {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
-
+  const Stack = createStackNavigator();
+  
+  
+  
   onAuthStateChanged(auth, (user) => {
     setUser(user);
   });
