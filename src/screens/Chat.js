@@ -1,6 +1,8 @@
 import { auth } from '../firebase/firebase'
-import React, { useCallback, useLayoutEffect, useState } from 'react'
+import React, { useCallback, useLayoutEffect, useState,useEffect } from 'react'
 import { GiftedChat } from 'react-native-gifted-chat'
+import { db } from '../firebase/firebase';
+const Chat = () => {
 const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -57,4 +59,5 @@ avatar: auth?.currentUser?.photoURL
 }}
 />
   )
+}
   export default Chat

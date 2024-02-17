@@ -202,14 +202,12 @@ export function NewAccount() {
     </View>
   );
 }
-function Chat(){
-  
-}
+
 
 function Main() {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
-  const Stack = createStackNavigator();
+  const Stack = createNativeStackNavigator();
   
   
   
