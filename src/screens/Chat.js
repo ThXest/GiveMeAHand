@@ -2,41 +2,36 @@ import { auth } from '../firebase/firebase'
 import React, { useCallback, useLayoutEffect, useState, useEffect } from 'react'
 import { GiftedChat } from 'react-native-gifted-chat'
 import { firestore } from '../firebase/firebase';
-import { doc, getDoc, collection, getDocs, query, orderBy, limit, setDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, query, orderBy, limit, setDoc, addDoc, where, or } from 'firebase/firestore';
 import { Text, View } from 'react-native';
 const Chat = ({ navigation, route }) => {
-  const [messages, setMessages] = useState([{
-    _id: 1,
-    text: 'Hello',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'React Native',
-      avatar: 'https://placeimg.com/140/140/any',
-    },
-  }]);
+  const [messages, setMessages] = useState([]);
 
   const getChats = async () => {
-    const chatsRef = collection(firestore, "chats");
-    const q = query(chatsRef, orderBy('createdAt', 'desc'));
-    const querySnapshot = await getDocs(q);
-    const newMessages = [...messages];
+    const messagesRef = collection(firestore, "chats");
+    console.log(route.params.username);
+    const query1 = query(messagesRef, or(where("sentTo", "==", auth.currentUser.email), where("user._id", "==", auth.currentUser.email)));
+
+    const querySnapshot = await getDocs(query1);
+    const newMessages = [];
     querySnapshot.forEach((doc) => {
       const data = doc.data();
       const _id = data._id;
       const createdAt = data.createdAt.toDate();
       const text = data.text;
       const user = data.user;
-
+      const sentTo = data.sentTo;
       // doc.data() is never undefined for query doc snapshots
       newMessages.push({
         _id: _id,
         createdAt: createdAt,
+        sentTo: sentTo,
         text: text,
         user: user,
       });
-      setMessages(newMessages);
+      console.log("2");
     });
+    setMessages(newMessages);
   }
 
   useEffect(() => {
@@ -68,10 +63,11 @@ const Chat = ({ navigation, route }) => {
       user
 
     } = messages[0]
-    await setDoc(doc(firestore, "chats", _id), {
+    await addDoc(collection(firestore, "chats"), {
       _id: _id,
       createdAt: createdAt,
       text: text,
+      sentTo: route.params.username,
       user: user,
     });
   }, [])
@@ -80,7 +76,7 @@ const Chat = ({ navigation, route }) => {
 
     <GiftedChat
       messages={messages}
-      showAvatarForEveryMessage={true}
+      showAvatarForEveryMessage={false}
       onSend={messages => onSend(messages)}
       user={{
         _id: auth?.currentUser?.email,

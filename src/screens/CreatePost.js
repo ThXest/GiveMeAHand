@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet } from 'react-native';
 import { firestore } from '../firebase/firebase';
 import { auth } from '../firebase/firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { addDoc, collection } from 'firebase/firestore';
 
 const CreatePost = ({ navigation }) => {
   const [content, setContent] = useState('');
@@ -12,7 +12,7 @@ const CreatePost = ({ navigation }) => {
 
     }
     else {
-      await setDoc(doc(firestore, 'posts', 'post3'), {
+      await addDoc(collection(firestore, 'posts'), {
         text_content: content,
         uid: user.uid,
       });

@@ -19,12 +19,13 @@ import Home from './src/screens/Home';
 import Chat from './src/screens/Chat';
 window.navigator.userAgent = "ReactNative";
 // Optionally import the services that you want to use
-import { auth } from './src/firebase/firebase';
+import { auth, firestore } from './src/firebase/firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import * as ImagePicker from 'expo-image-picker';
 import { Buffer } from "buffer";
 import base64 from 'react-native-base64';
 import { decode } from 'base-64';
+import { setDoc } from 'firebase/firestore';
 
 if (typeof atob === 'undefined') {
   global.atob = decode;
@@ -106,7 +107,9 @@ function Main() {
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Main'>
+      <Stack.Navigator initialRouteName='Main' screenOptions={{
+        headerShown: false
+      }}>
         <Stack.Screen name="Main"
           component={Main} />
 

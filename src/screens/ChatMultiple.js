@@ -1,33 +1,54 @@
 import React, { useCallback, useState, useEffect } from 'react'
 import { View, FlatList, Button, TextInput } from 'react-native';
-import { firestore } from '../firebase/firebase';
-import { doc, collection, getDocs, query, orderBy, setDoc } from 'firebase/firestore';
+import { auth, firestore } from '../firebase/firebase';
+import { doc, collection, getDocs, query, orderBy, setDoc, where, getDoc, limit, collectionGroup, or } from 'firebase/firestore';
 import Post from '../components/Post';
 import ChatComponent from '../components/ChatComponent';
 const ChatMultiple = ({ navigation }) => {
     const [user, setUser] = useState("");
-    const [chats, setChats] = useState([]);
+    const [chats, setChats] = useState([
 
+    ]);
+    let index = 1;
     const getChats = async () => {
-        const chatsRef = collection(firestore, "chats");
-        const q = query(chatsRef, orderBy('chatStartTime', 'desc'));
-        const querySnapshot = await getDocs(q);
+        const userRef = collection(firestore, "chats");
+        const query1 = query(userRef, or(where("sentTo", "==", auth.currentUser.email), where("user._id", "==", auth.currentUser.email)));
+        const querySnapshot = await getDocs(query1);
         const newChats = [];
         querySnapshot.forEach((doc) => {
             const data = doc.data();
-            const chatStartTime = data.chatStartTime.toDate();
-            const messages = data.messages;
-            const newMessages = [];
-            const user = data.user;
-            // doc.data() is never undefined for query doc snapshots
-            newChats.push({
-                user: user,
-                chatStartTime: chatStartTime,
-                messages: newMessages,
-            });
+            const user = data.user._id;
+            const sentTo = data.sentTo;
+            if (user == auth.currentUser.email) {
+                if (!newChats.includes({
+                    key: index,
+                    user: sentTo,
+                })) {
+                    newChats.push({
+                        key: index,
+                        user: sentTo,
+                    })
+                    index += 1;
+                }
 
+            }
+
+            else {
+                if (!newChats.includes({
+                    key: index,
+                    user: user,
+                })) {
+                    newChats.push({
+                        key: index,
+                        user: user,
+                    })
+                    index += 1;
+                }
+            }
+            // doc.data() is never undefined for query doc snapshots
         });
         setChats(newChats);
+        index = 1;
     }
 
     useEffect(() => {
@@ -37,34 +58,11 @@ const ChatMultiple = ({ navigation }) => {
 
         return unsubscribe;
     }, [navigation]);
-    const onSend = useCallback(async (user1) => {
-        await setDoc(doc(firestore, "chats", user1.toString()), {
-            user: {
-                //id: _id,
-                name: user1,
-                //avatar: avatar,
-            },
-            chatStartTime: new Date(),
-            messages: {
-                message1: {
-                    _id: 1,
-                    text: 'Hello',
-                    createdAt: new Date(),
-                    sentBy: 0
-                },
-                message2: {
-                    _id: 2,
-                    text: 'Hi',
-                    createdAt: new Date(),
-                    sentBy: 1
-                },
-            }
-        });
-    }, [])
+
 
     const renderComponent = ({ item }) => (
-        <ChatComponent username={item.user.name} onPress={() => {
-            navigation.navigate("Chat", { username: item.user.name });
+        <ChatComponent username={item.user} onPress={() => {
+            navigation.navigate("Chat", { username: item.user });
         }} />
     )
     return (
@@ -73,12 +71,12 @@ const ChatMultiple = ({ navigation }) => {
                 setUser(text);
             }} value={user} placeholder='Email' />
             <Button title='Start' onPress={() => {
-                onSend(user)
+                navigation.navigate("Chat", { username: user });
             }} />
             <FlatList
                 data={chats}
                 renderItem={renderComponent}
-                keyExtractor={(item) => item.user.name}
+                keyExtractor={(item) => item.key}
             />
         </View>
 
