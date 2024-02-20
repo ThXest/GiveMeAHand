@@ -3,7 +3,8 @@ import React, { useCallback, useLayoutEffect, useState, useEffect } from 'react'
 import { GiftedChat } from 'react-native-gifted-chat'
 import { firestore } from '../firebase/firebase';
 import { doc, getDoc, collection, getDocs, query, orderBy, limit, setDoc } from 'firebase/firestore';
-const Chat = ({ navigation }) => {
+import { Text, View } from 'react-native';
+const Chat = ({ navigation, route }) => {
   const [messages, setMessages] = useState([{
     _id: 1,
     text: 'Hello',
@@ -76,6 +77,7 @@ const Chat = ({ navigation }) => {
   }, [])
 
   return (
+
     <GiftedChat
       messages={messages}
       showAvatarForEveryMessage={true}
@@ -86,6 +88,8 @@ const Chat = ({ navigation }) => {
         avatar: auth?.currentUser?.photoURL
       }}
     />
+
+
   )
 }
 export default Chat

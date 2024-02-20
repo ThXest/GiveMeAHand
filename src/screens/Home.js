@@ -4,6 +4,7 @@ import Feed from './Feed';
 import CreatePost from './CreatePost';
 import Profile from './Profile';
 import Chat from './Chat';
+import ChatMultiple from './ChatMultiple';
 const Tab = createBottomTabNavigator();
 
 const Home = () => {
@@ -12,7 +13,7 @@ const Home = () => {
       <Tab.Screen name="Feed" component={Feed} />
       <Tab.Screen name="CreatePost" component={CreatePost} />
       <Tab.Screen name="Profile" component={Profile} />
-      <Tab.Screen name="Chat" component={Chat} />
+      <Tab.Screen name="ChatMultiple" component={ChatMultiple} />
     </Tab.Navigator>
   );
 };
