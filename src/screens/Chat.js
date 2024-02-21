@@ -2,7 +2,7 @@ import { auth } from '../firebase/firebase'
 import React, { useCallback, useLayoutEffect, useState, useEffect } from 'react'
 import { GiftedChat } from 'react-native-gifted-chat'
 import { firestore } from '../firebase/firebase';
-import { doc, getDoc, collection, getDocs, query, orderBy, limit, setDoc, addDoc, where, or } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, query, orderBy, limit, setDoc, addDoc, where, or, and } from 'firebase/firestore';
 import { Text, View } from 'react-native';
 const Chat = ({ navigation, route }) => {
   const [messages, setMessages] = useState([]);
@@ -10,7 +10,7 @@ const Chat = ({ navigation, route }) => {
   const getChats = async () => {
     const messagesRef = collection(firestore, "chats");
     console.log(route.params.username);
-    const query1 = query(messagesRef, or(where("sentTo", "==", auth.currentUser.email), where("user._id", "==", auth.currentUser.email)), orderBy("createdAt", "desc"));
+    const query1 = query(messagesRef, or(and(where("sentTo", "==", auth.currentUser.email), where("user._id", "==", route.params.username)), and(where("sentTo", "==", route.params.username), where("user._id", "==", auth.currentUser.email))), orderBy("createdAt", "desc"));
 
     const querySnapshot = await getDocs(query1);
     const newMessages = [];
