@@ -26,6 +26,7 @@ import { Buffer } from "buffer";
 import base64 from 'react-native-base64';
 import { decode } from 'base-64';
 import { setDoc } from 'firebase/firestore';
+import Profile from './src/screens/Profile';
 
 if (typeof atob === 'undefined') {
   global.atob = decode;
@@ -63,7 +64,7 @@ export function NewAccount() {
   const [password, setPassword] = useState("");
   const navigation = useNavigation();
   return (
-    <View>
+    <View style={{ marginTop: '10%' }}>
       <TextInput onChangeText={setEmail} value={email} placeholder='Email' />
       <TextInput onChangeText={setPassword} value={password} placeholder='Password' secureTextEntry={true} />
       <Button title="Sign Up" onPress={() => {
@@ -120,6 +121,8 @@ function App() {
           component={NewAccount} />
 
         <Stack.Screen name='Chat' component={Chat} />
+
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

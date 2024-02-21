@@ -14,7 +14,7 @@ const CreatePost = ({ navigation }) => {
     else {
       await addDoc(collection(firestore, 'posts'), {
         text_content: content,
-        uid: user.uid,
+        uid: user.email,
       });
     }
 

@@ -3,7 +3,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { View, FlatList, Button, StyleSheet } from 'react-native';
 import Post from '../components/Post';
 import { firestore } from '../firebase/firebase';
-import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 // Add navigation as a prop to the Feed component
 const Feed = ({ navigation }) => {
@@ -12,7 +12,9 @@ const Feed = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
   let number = 1;
   const getFromFirestore = async () => {
-    const querySnapshot = await getDocs(collection(firestore, "posts")); // Get all posts from Firestore
+    const postsRef = collection(firestore, "posts");
+    const orderQuery = query(postsRef, orderBy("text_content"));
+    const querySnapshot = await getDocs(orderQuery); // Get all posts from Firestore
     const newPosts = [];
     // so we need to iterate through the querySnapshot to get the data for each post
     // how did you understand that it retrieves all post data?
