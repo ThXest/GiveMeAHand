@@ -20,24 +20,22 @@ const ChatMultiple = ({ navigation }) => {
             const user = data.user._id;
             const sentTo = data.sentTo;
             if (user == auth.currentUser.email) {
-                if (!newChats.includes({
-                    key: index,
-                    user: sentTo,
-                })) {
+                const res = newChats.filter((chat) => {
+                    return chat.user == sentTo;
+                });
+                if (res.length == 0) {
                     newChats.push({
                         key: index,
                         user: sentTo,
                     })
                     index += 1;
                 }
-
             }
-
             else {
-                if (!newChats.includes({
-                    key: index,
-                    user: user,
-                })) {
+                const res = newChats.filter((chat) => {
+                    return chat.user == user;
+                });
+                if (res.length == 0) {
                     newChats.push({
                         key: index,
                         user: user,

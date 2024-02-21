@@ -10,7 +10,7 @@ const Chat = ({ navigation, route }) => {
   const getChats = async () => {
     const messagesRef = collection(firestore, "chats");
     console.log(route.params.username);
-    const query1 = query(messagesRef, or(where("sentTo", "==", auth.currentUser.email), where("user._id", "==", auth.currentUser.email)));
+    const query1 = query(messagesRef, or(where("sentTo", "==", auth.currentUser.email), where("user._id", "==", auth.currentUser.email)), orderBy("createdAt", "desc"));
 
     const querySnapshot = await getDocs(query1);
     const newMessages = [];
