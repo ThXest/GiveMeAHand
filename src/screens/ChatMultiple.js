@@ -67,7 +67,7 @@ const ChatMultiple = ({ navigation }) => {
         <View>
             <TextInput onChangeText={(text) => {
                 setUser(text);
-            }} value={user} placeholder='Email' />
+            }} value={user} placeholder='Enter email of the person you want to chat' />
             <Button title='Start' onPress={() => {
                 navigation.navigate("Chat", { username: user });
             }} />
